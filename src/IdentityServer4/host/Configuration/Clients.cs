@@ -34,14 +34,14 @@ namespace Host.Configuration
                 {
                     ClientId = "mtls",
                     ClientSecrets = {
-                        new Secret(@"CN=mtls.test, OU=ROO\ballen@roo, O=mkcert development certificate", "mtls.test")
+                        // new Secret(@"CN=mtls.test, OU=ROO\ballen@roo, O=mkcert development certificate", "mtls.test")
+                        // {
+                        //     Type = SecretTypes.X509CertificateName
+                        // },
+                        new Secret("5D9E9B6B333CD42C99D1DE6175CC0F3EF99DDF68", "mtls.test")
                         {
-                            Type = SecretTypes.X509CertificateName
+                            Type = SecretTypes.X509CertificateThumbprint
                         },
-                        //new Secret("bca0d040847f843c5ee0fa6eb494837470155868", "mtls.test")
-                        //{
-                        //    Type = SecretTypes.X509CertificateThumbprint
-                        //},
                     },
 
                     AccessTokenType = AccessTokenType.Jwt,
@@ -136,7 +136,7 @@ namespace Host.Configuration
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
 
-                    RedirectUris = { "http://127.0.0.1", "sample-windows-client://callback" },
+                    RedirectUris = { "http://127.0.0.1" },
 
                     AllowOfflineAccess = true,
 
@@ -148,6 +148,33 @@ namespace Host.Configuration
                         "api1", "api2.read_only"
                     }
                 },
+                ///////////////////////////////////////////
+                // WinConsole with PKCE Sample
+                //////////////////////////////////////////
+                new Client
+                {
+                    ClientId = "winconsole",
+                    ClientName = "Windows Console with PKCE Sample",
+                    RequireClientSecret = false,
+
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+
+                    RedirectUris = { "sample-windows-client://callback" },
+                    RequireConsent = false,
+
+                    AllowOfflineAccess = true,
+                    AllowedIdentityTokenSigningAlgorithms = { "ES256" },
+
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "api1", "api2.read_only"
+                    }
+                },
+
 
                 ///////////////////////////////////////////
                 // Introspection Client Sample

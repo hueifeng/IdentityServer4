@@ -2,13 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using FluentAssertions;
-using IdentityModel;
-using IdentityModel.Client;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,9 +10,17 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
+using IdentityModel;
+using IdentityModel.Client;
+using IdentityServer.IntegrationTests.Clients.Setup;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace IdentityServer4.IntegrationTests.Clients
+namespace IdentityServer.IntegrationTests.Clients
 {
     public class ExtensionGrantClient
     {
@@ -238,7 +239,7 @@ namespace IdentityServer4.IntegrationTests.Clients
             scopes.First().ToString().Should().Be("api1");
         }
 
-        [Fact(Skip = "Review: should default scopes include offline_access?")]
+        [Fact]
         public async Task Valid_client_with_default_scopes_should_succeed()
         {
             var response = await _client.RequestTokenAsync(new TokenRequest
@@ -260,7 +261,7 @@ namespace IdentityServer4.IntegrationTests.Clients
             response.ExpiresIn.Should().Be(3600);
             response.TokenType.Should().Be("Bearer");
             response.IdentityToken.Should().BeNull();
-            response.RefreshToken.Should().BeNull();
+            response.RefreshToken.Should().NotBeNull();
 
             var payload = GetPayload(response);
 
@@ -277,9 +278,10 @@ namespace IdentityServer4.IntegrationTests.Clients
             amr.First().ToString().Should().Be("custom");
 
             var scopes = payload["scope"] as JArray;
-            scopes.Count().Should().Be(2);
+            scopes.Count().Should().Be(3);
             scopes.First().ToString().Should().Be("api1");
             scopes.Skip(1).First().ToString().Should().Be("api2");
+            scopes.Skip(2).First().ToString().Should().Be("offline_access");
         }
 
         [Fact]
